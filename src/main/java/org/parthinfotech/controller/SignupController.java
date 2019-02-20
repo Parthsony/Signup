@@ -2,7 +2,8 @@ package org.parthinfotech.controller;
 
 import java.net.URI;
 
-import org.modelmapper.ModelMapper;
+import javax.mail.MessagingException;
+
 import org.parthinfotech.dto.SignupDto;
 import org.parthinfotech.model.Signup;
 import org.parthinfotech.repository.SignupRepository;
@@ -11,6 +12,7 @@ import org.parthinfotech.utility.DtoUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,22 +31,27 @@ public class SignupController {
 	@Autowired
 	private SignupRepository repository;
 
-	@Autowired
-	private ModelMapper mapper;
-
 	@GetMapping("/available")
 	@ResponseBody
 	public boolean isEmailAvailable(@RequestParam String email) {
-		return null == repository.findByEmailIgnoreCase(email);
+		return repository.countByEmailIgnoreCase(email) == 0;
 	}
 
 	@PostMapping
-	public ResponseEntity<Void> saveNewUser(@RequestBody SignupDto newUserDto) {
+	public ResponseEntity<Void> doSignup(@RequestBody SignupDto newUserDto) throws MessagingException {
 
-		Signup convertDtoToModel = (Signup) DtoUtility.convertDtoToModel(newUserDto, Signup.class, mapper);
-		Signup newUserModel = signupServiceImpl.createNewUser(convertDtoToModel);
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}").buildAndExpand(newUserModel.getId())
-				.toUri();
-		return ResponseEntity.created(uri).build();
+		Signup requestEntity = (Signup) DtoUtility.dtoToEntity(newUserDto, Signup.class);
+
+		Signup newUserModel = signupServiceImpl.createNewUser(requestEntity);
+
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("{id}")
+				.buildAndExpand(newUserModel.getId()).toUri();
+
+		return ResponseEntity.created(location).build();
+	}
+
+	@PatchMapping("/activate")
+	public boolean activateAccount() {
+		return false;
 	}
 }

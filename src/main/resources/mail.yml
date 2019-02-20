@@ -1,0 +1,4 @@
+mail :
+	hostname = host@gmail.com
+	port = 9000
+	from = parthsony1993@gmail.com

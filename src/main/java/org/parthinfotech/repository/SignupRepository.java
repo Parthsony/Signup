@@ -11,4 +11,5 @@ public interface SignupRepository extends JpaRepository<Signup, Long> {
 	@Nullable
 	Signup findByEmailIgnoreCase(String email);
 
+	Long countByEmailIgnoreCase(String email);
 }

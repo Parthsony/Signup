@@ -1,6 +1,7 @@
 package org.parthinfotech.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,5 +39,9 @@ public class Signup implements Serializable {
 	private String email;
 
 	private String password;
+
+	private boolean emailVerified;
+
+	private Date created;
 
 }
