@@ -70,6 +70,8 @@ public class SignupController {
 
 	@PatchMapping("/activate")
 	public boolean activateAccount() {
+		
+		
 		return false;
 	}
 	
