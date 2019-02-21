@@ -1,19 +1,17 @@
 package org.parthinfotech.serviceimpl;
 
 import java.util.Date;
+import java.util.UUID;
 
 import javax.mail.MessagingException;
-import javax.transaction.Transactional;
 
-import org.parthinfotech.dto.UserDto;
 import org.parthinfotech.exception.UserAlreadyExistException;
 import org.parthinfotech.mail.MailClient;
 import org.parthinfotech.model.Signup;
-import org.parthinfotech.model.User;
 import org.parthinfotech.repository.SignupRepository;
-import org.parthinfotech.repository.UserRepository;
 import org.parthinfotech.service.SignupService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,18 +21,42 @@ public class SignupServiceImpl implements SignupService {
 	private SignupRepository repository;
 
 	@Autowired
-	private UserRepository userRepository;
+	private MailClient mailClient;
 
 	@Autowired
-	private MailClient mailClient;
+	private Environment env;
 
 	@Override
 	public Signup createNewUser(Signup signup) throws MessagingException {
 
 		validateNewSignupRequest(signup.getEmail());
-		mailClient.prepareAndSend("Confirm your email", signup.getEmail(), "Please click on the below link to verify");
+
+		String requestId = UUID.randomUUID().toString();
+		mailClient.prepareAndSend("Confirm your email", signup.getEmail(),
+				"Please click on the below link to verify <br> <a href=" + prepareEmailMessage(requestId)
+						+ "> click here </a>");
+
+		signup.setRequestId(requestId);
 		signup.setCreated(new Date());
+		signup.setRequestId(requestId);
 		return repository.save(signup);
+	}
+
+	public boolean activateUser(Signup user) {
+
+		if (validateRequestTime(user.getCreated())) {
+			user.setEmailVerified(true);
+			repository.save(user);
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean validateRequestTime(Date created) {
+
+		long diffInMinutes = (new Date().getTime() - created.getTime()) / (60 * 1000);
+		return diffInMinutes <= 15;
 	}
 
 	private void validateNewSignupRequest(String email) {
@@ -44,18 +66,7 @@ public class SignupServiceImpl implements SignupService {
 		}
 	}
 
-	@Transactional
-	public User registerNewUserAccount(UserDto accountDto) {
-
-		if (emailExist(accountDto.getEmail())) {
-			throw new UserAlreadyExistException("There is an account with that email adress: " + accountDto.getEmail());
-		}
-		return null;
-
+	private String prepareEmailMessage(String requestId) {
+		return env.getProperty("app.environment") + "/signup/activate?request=" + requestId;
 	}
-
-	private boolean emailExist(String email) {
-		return userRepository.findByEmailIgnoreCase(email) != null;
-	}
-
 }

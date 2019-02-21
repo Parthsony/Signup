@@ -12,4 +12,9 @@ public interface SignupRepository extends JpaRepository<Signup, Long> {
 	Signup findByEmailIgnoreCase(String email);
 
 	Long countByEmailIgnoreCase(String email);
+	
+	Long countByRequestId(String requestId);
+
+	@Nullable
+	Signup findByRequestId(String requestId);
 }

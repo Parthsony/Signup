@@ -31,6 +31,8 @@ public class Signup implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
+	private String requestId;
+
 	private String firstName;
 
 	private String lastName;
