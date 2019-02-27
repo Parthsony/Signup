@@ -14,17 +14,28 @@ import lombok.Setter;
 @PasswordMatches
 public class UserDto {
 
-	@NotNull
-	@NotEmpty
+	public UserDto(@NotNull @NotEmpty String firstName, @NotNull @NotEmpty String lastName,
+			@NotNull @NotEmpty String password, String matchingPassword, @NotNull @NotEmpty String email) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.password = password;
+		this.matchingPassword = matchingPassword;
+		this.email = email;
+	}
+
+	@NotNull(message = "First name is mandatory")
+	@NotEmpty(message = "First name can't be empty")
 	private String firstName;
 
-	@NotNull
-	@NotEmpty
+	@NotNull(message = "Last name is mandatory")
+	@NotEmpty(message = "Last name can't be empty")
 	private String lastName;
 
-	@NotNull
-	@NotEmpty
+	@NotNull(message = "Password is mandatory")
+	@NotEmpty(message = "Password can't be empty")
 	private String password;
+
 	private String matchingPassword;
 
 	@ValidEmail

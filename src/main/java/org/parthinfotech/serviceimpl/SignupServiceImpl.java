@@ -14,6 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+/**
+ * Service layer of signup process
+ * 
+ * @author Parth Soni
+ *
+ */
 @Component
 public class SignupServiceImpl implements SignupService {
 
@@ -32,7 +38,7 @@ public class SignupServiceImpl implements SignupService {
 		validateNewSignupRequest(signup.getEmail());
 
 		String requestId = UUID.randomUUID().toString();
-		mailClient.prepareAndSend("Confirm your email", signup.getEmail(),
+		mailClient.prepareAndSend("", signup.getEmail(),
 				"Please click on the below link to verify <br> <a href=" + prepareEmailMessage(requestId)
 						+ "> click here </a>");
 

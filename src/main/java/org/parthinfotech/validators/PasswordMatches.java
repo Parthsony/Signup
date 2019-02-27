@@ -9,10 +9,12 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+import org.parthinfotech.validators.implementation.PasswordMatchesValidator;
+
+@Documented
+@Constraint(validatedBy = PasswordMatchesValidator.class)
 @Target({ ElementType.TYPE, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = PasswordMatchesValidator.class)
-@Documented
 public @interface PasswordMatches {
 
 	String message() default "Passwords don't match";

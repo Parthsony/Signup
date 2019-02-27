@@ -1,10 +1,12 @@
-package org.parthinfotech.validators;
+package org.parthinfotech.validators.implementation;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+
+import org.parthinfotech.validators.ValidEmail;
 
 public class EmailValidator implements ConstraintValidator<ValidEmail, String> {
 
